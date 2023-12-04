@@ -1,7 +1,7 @@
 1. The result should be in Excel file format
 2. Contents of the Excel file: a list of all tests that were carried out on the site
 3. Testing will be carried out based on user-created “scenarios”
-4. "Scenarios" format - yaml
+4. "Scenarios" format - yaml or json // I chose Json
 5. Functions:
 	- The code that the site returns
 	- Search for a specified html element on a website
