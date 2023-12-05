@@ -1,6 +1,6 @@
 from openpyxl import load_workbook
 
-file = 'TestResult.xlsx' #Create or open file with that name
+file = 'TestResults.xlsx' #Create or open file with that name
 lst = load_workbook(file) #It is depend on save and close command
 ws = lst.create_sheet('Results') # CREATE LIST "Results"
 xlsx = lst['Results'] #List in 'TestResult.xlsx'
