@@ -1,7 +1,8 @@
 import requests
 from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError
-from openpyxl import load_workbook
+from openpyxl import load_workbook 
+from bs4 import BeautifulSoup
 #THIS FILE WAS CREATED AS A COLLECTION OF TEAMS MODELS, 
 #THEIR DESCRIPTIONS AND FURTHER DEVELOPMENT
 
@@ -14,9 +15,10 @@ def help():
     "\t-help -- Write a manual for using the program\n" +
     "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
     "\t-code_post <url> -- Returns the code from your post requests to the url\n" +
-    "\t-byid <url> <id> -- Returns the HTML element from your get requests to the url by id\n" +
-    "\t-create <file_name> -- Returns the HTML element from your get requests to the url by id\n" +
-    "\t-read <file_name> -- Returns the HTML element from your get requests to the url by id\n"  
+    "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
+    "\t-byid <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
+    "\t-create <file_name> -- Create scenario in document\n" +
+    "\t-read <file_name> -- Read document with scenario\n"  
     )
     work()
 
@@ -26,7 +28,11 @@ def help():
 def code_get(p_url):
     try:
         url = p_url
-        site = requests.get(url)
+        try:
+            site = requests.get(url)
+        except Exception:
+            print("\tInvalid values\n")
+            work()
         code = site.status_code # CODE OF GET REQUEST
         print("\tReturned сode: " + str(code) + '\n')
     except ConnectionError: 
@@ -48,7 +54,11 @@ def code_get(p_url):
 def code_post(p_url):
     try:
         url = p_url
-        site = requests.post(url)
+        try:
+            site = requests.post(url)
+        except Exception:
+            print("\tInvalid values\n")
+            work()
         code = site.status_code # CODE OF POST REQUEST
         print("\tReturned сode: " + str(code) + '\n')
     except ConnectionError: 
@@ -106,7 +116,25 @@ def excel():
     lst.close()
 
     
-#COMMAND 5 - START 
+#COMMAND 5 - ELEMENT BY TAG
+#RETURNS THE HTML ELEMENT FROM YOUR GET REQUESTS TO THE URL BY TAG
+def bytag(p_url, p_tag):
+    url = p_url
+    site = requests.get(url)
+    html = site.text # GET HTML OF THE SITE
+    soup = BeautifulSoup(html, 'html.parser')
+    u_tag = soup.find_all('{0}'.format(p_tag))
+    print('\t' + str(u_tag) + '\n')
+    #file = 'TestResults.xlsx' #Create or open file with that name
+    #lst = load_workbook(file) #It is depend on save and close command
+    #xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
+    #xlsx.append([p_id,url,reslt]) #Adding that data in xlsx file
+    #lst.save(file) #REMEMBER THE WRITING RULES
+    #lst.close()
+    #work()
+
+
+#COMMAND N - START 
 #STARTS A FUNCTION TREE
 def work():
     order = str(input())
@@ -125,6 +153,10 @@ def work():
                 p_url = orderarray[1]
                 p_id = orderarray[2]
                 byid(p_url, p_id)
+        case"-bytag":
+                p_url = orderarray[1]
+                p_tag = orderarray[2]
+                bytag(p_url, p_tag)
         case _:
                 print("\tError\n" + "\tWe're sorry, but this command doesn't exist, please use -help")
                 work()
@@ -133,8 +165,7 @@ def work():
 
 
 print("\tWelcome, The program is running, enter the command or -help for manual to program\n")
-file = 'TestResults.xlsx'
-lst = load_workbook(file)
+lst = load_workbook('TestResults.xlsx')
 if "ScenarioResults" != lst.sheetnames[0]:
     excel()
 
