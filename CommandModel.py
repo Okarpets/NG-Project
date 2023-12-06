@@ -3,6 +3,7 @@ from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError
 from openpyxl import load_workbook 
 from bs4 import BeautifulSoup
+import json
 #THIS FILE WAS CREATED AS A COLLECTION OF TEAMS MODELS, 
 #THEIR DESCRIPTIONS AND FURTHER DEVELOPMENT
 
@@ -16,7 +17,7 @@ def help():
     "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
     "\t-code_post <url> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
-    "\t-byid <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
+    "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <file_name> -- Create scenario in document\n" +
     "\t-read <file_name> -- Read document with scenario\n"  
     )
@@ -80,6 +81,8 @@ def code_post(p_url):
 def byid(p_url, p_id):
     url = p_url
     site = requests.get(url)
+    soup = BeautifulSoup(site.text, 'html.parser')
+    u_id = soup.find_all(id='{0}'.format(p_id))
     html = site.text # GET HTML OF THE SITE
     u_id = "id=\"{}\"".format(p_id) # ID SEARCH
     if u_id in html:
@@ -89,8 +92,8 @@ def byid(p_url, p_id):
     print('\t' + reslt + '\n')
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
-    xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
-    xlsx.append([p_id,url,reslt]) #Adding that data in xlsx file
+    #xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
+    #xlsx.append([p_id,url,reslt]) #Adding that data in xlsx file
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
     work()
@@ -121,17 +124,59 @@ def excel():
 def bytag(p_url, p_tag):
     url = p_url
     site = requests.get(url)
-    html = site.text # GET HTML OF THE SITE
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(site.text, 'html.parser')
     u_tag = soup.find_all('{0}'.format(p_tag))
+    print(u_tag)
     print('\t' + str(u_tag) + '\n')
-    #file = 'TestResults.xlsx' #Create or open file with that name
-    #lst = load_workbook(file) #It is depend on save and close command
+    file = 'TestResults.xlsx' #Create or open file with that name
+    lst = load_workbook(file) #It is depend on save and close command
     #xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
-    #xlsx.append([p_id,url,reslt]) #Adding that data in xlsx file
-    #lst.save(file) #REMEMBER THE WRITING RULES
-    #lst.close()
-    #work()
+    #xlsx.append([p_tag,url,reslt]) #Adding that data in xlsx file
+    lst.save(file) #REMEMBER THE WRITING RULES
+    lst.close()
+    work()
+
+
+#CREATE SCENARIO MODEL (PROTOTYPE)
+def create(p_name):
+    file = open(f"{p_name}.json", 'w')
+    file.write('[')
+    command = "0"
+    while True:
+        id = str(input('\tEnter scenario id: '))
+        url = str(input('\tEnter url: '))
+        print(
+            "\t\t\tNow pleaase write all command we have to do:\n\n" +
+        "\t\t\tCOMMAND: (ATTENTION, THESE COMMANDS ARE DIFFERENT!)\n\n"
+        "\tcode_get-<url> -- Returns the code from your get requests to the url\n" +
+        "\tcode_post-<url> -- Returns the code from your post requests to the url\n" +
+        "\tbyid-<url>-<id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
+        "\tbytag-<url>-<tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n\n" +
+        "\t\tEXAMPLE: code_get-https://stackoverflow.com/ code_post-https://www.google.com/"
+        )
+        operation = str(input('\tCreate commands:\n\t')).split(" ")
+        data = {"scen" : id, "url" : url, "command" : operation}
+        print("You want create new case? If yes enter any button, else - \"F\"")
+        command = str(input('\t\n'))
+        if command == 'F' or command == 'f':
+            json.dump(data, file)
+            file.write('\n')
+            file.write(']')
+            file.close()
+            work()
+        else:
+            json.dump(data, file)
+            file.write(',\n')
+            
+    
+
+
+#READ SCENARION MODEL (PROTOTYPE)
+def read(order):
+    f_name = order[1]
+    file = open(f"{f_name}.json", "r")
+    for lines in file:
+        print(lines)
 
 
 #COMMAND N - START 
@@ -157,6 +202,13 @@ def work():
                 p_url = orderarray[1]
                 p_tag = orderarray[2]
                 bytag(p_url, p_tag)
+        case"-byclass":
+                p_url = orderarray[1]
+                p_class = orderarray[2]
+                bytag(p_url, p_class)
+        case"-create":
+                p_name = orderarray[1]
+                create(p_name)
         case _:
                 print("\tError\n" + "\tWe're sorry, but this command doesn't exist, please use -help")
                 work()
