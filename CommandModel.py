@@ -14,12 +14,14 @@ def help():
     "\t-help -- Write a manual for using the program\n" +
     "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
     "\t-code_post <url> -- Returns the code from your post requests to the url\n" +
-    "\t-byid <url> <id> -- Returns the HTML element from your get requests to the url by id\n"       
+    "\t-byid <url> <id> -- Returns the HTML element from your get requests to the url by id\n" +
+    "\t-create <file_name> -- Returns the HTML element from your get requests to the url by id\n" +
+    "\t-read <file_name> -- Returns the HTML element from your get requests to the url by id\n"  
     )
     work()
 
 
-#COMAND 1 - CODE_GET
+#COMMAND 1 - CODE_GET
 #RETURNS THE CODE FROM YOUR GET REQUESTS TO THE URL
 def code_get(p_url):
     try:
@@ -41,7 +43,7 @@ def code_get(p_url):
     work()
 
 
-#COMAND 2 - CODE_POST
+#COMMAND 2 - CODE_POST
 #RETURNS THE CODE FROM YOUR POST REQUESTS TO THE URL
 def code_post(p_url):
     try:
@@ -63,7 +65,7 @@ def code_post(p_url):
     work()
 
 
-#COMAND 3 - ELEMENT BY ID
+#COMMAND 3 - ELEMENT BY ID
 #RETURNS THE HTML ELEMENT FROM YOUR GET REQUESTS TO THE URL BY ID
 def byid(p_url, p_id):
     url = p_url
@@ -83,6 +85,29 @@ def byid(p_url, p_id):
     lst.close()
     work()
 
+
+#COMAND 4 - FORMATS .XLSX DOCUMENT
+#FORMATS THIS FILE BY ADDING THE NECESSARY SHEETS, DELETING UNNECESSARY ONES
+def excel():
+    file = 'TestResults.xlsx'
+    lst = load_workbook(file) #It is depend on save and close command
+    for sheet_name in lst.sheetnames:
+        sheet = lst[(sheet_name)]
+        lst.remove(sheet)
+    lst.create_sheet('ScenarioResults')
+    lst.create_sheet('CodeGetResults') # CREATE LISTS
+    lst.create_sheet('CodePostResults')
+    lst.create_sheet('ElementById')
+    lst['CodeGetResults'].append(["Url","Returned Code"])
+    lst['CodePostResults'].append(["Url","Returned Code"])
+    lst['ElementById'].append(["Given Id","Url","Result"])
+    lst['ScenarioResults'].append(["Scenario number","Url","Looked by id","Get requests","Post requests"])
+    lst.save(file) #REMEMBER THE WRITING RULES
+    lst.close()
+
+    
+#COMMAND 5 - START 
+#STARTS A FUNCTION TREE
 def work():
     order = str(input())
     print('\n')
@@ -104,23 +129,7 @@ def work():
                 print("\tError\n" + "\tWe're sorry, but this command doesn't exist, please use -help")
                 work()
 
-def excel():
-    file = 'TestResults.xlsx'
-    lst = load_workbook(file) #It is depend on save and close command
-    # Удаление листа, создаваемого по умолчанию, при создании документа
-    for sheet_name in lst.sheetnames:
-        sheet = lst[(sheet_name)]
-        lst.remove(sheet)
-    lst.create_sheet('ScenarioResults')
-    lst.create_sheet('CodeGetResults') # CREATE LISTS
-    lst.create_sheet('CodePostResults')
-    lst.create_sheet('ElementById')
-    lst['CodeGetResults'].append(["Url","Returned Code"])
-    lst['CodePostResults'].append(["Url","Returned Code"])
-    lst['ElementById'].append(["Given Id","Url","Result"])
-    lst['ScenarioResults'].append(["Scenario number","Url","Looked by id","Get requests","Post requests"])
-    lst.save(file) #REMEMBER THE WRITING RULES
-    lst.close()
+
 
 
 print("\tWelcome, The program is running, enter the command or -help for manual to program\n")
