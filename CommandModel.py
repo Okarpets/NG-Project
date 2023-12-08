@@ -4,12 +4,9 @@ from requests.exceptions import ConnectionError
 from openpyxl import load_workbook 
 from bs4 import BeautifulSoup
 import json
-#THIS FILE WAS CREATED AS A COLLECTION OF TEAMS MODELS, 
-#THEIR DESCRIPTIONS AND FURTHER DEVELOPMENT
 
 
 #COMAND 0 - HELP
-#THIS COMMAND WILL WRITE A MANUAL FOR USING THE PROGRAM
 def help():
     print(
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
@@ -20,15 +17,12 @@ def help():
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <file_name> -- Create scenario in document\n" +
-    "\t-read <file_name> <type>-- Read document with scenario\n" +
-    "\t\tTypes: all (Process all scenarios), <id> (One of all)\n" +
-    "\t\tEXAMPLES: -read all OR -read 23 (Process only 23rd scenario)"
+    "\t-read <file_name> -- Read and process all scenario in document\n"
     )
     work()
 
 
-#COMMAND 1 - CODE_GET
-#RETURNS THE CODE FROM YOUR GET REQUESTS TO THE URL
+#COMMAND 1 - RETURN GET CODE REQUESTS
 def code_get(p_url):
     try:
         url = p_url
@@ -43,7 +37,6 @@ def code_get(p_url):
         print("\tConnection error\n")
     except Timeout:
         print("\tThe request timed out\n")
-
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodeGetResults'] #List in 'TestResult.xlsx'
@@ -53,8 +46,7 @@ def code_get(p_url):
     work()
 
 
-#COMMAND 2 - CODE_POST
-#RETURNS THE CODE FROM YOUR POST REQUESTS TO THE URL
+#COMMAND 2 - RETURN POST CODE REQUESTS
 def code_post(p_url):
     try:
         url = p_url
@@ -80,15 +72,13 @@ def code_post(p_url):
 
 
 #COMMAND 3 - ELEMENT BY ID
-#RETURNS THE HTML ELEMENT FROM YOUR GET REQUESTS TO THE URL BY ID
 def byid(p_url, p_id):
     url = p_url
     site = requests.get(url)
     soup = BeautifulSoup(site.text, 'html.parser')
     u_id = soup.find_all(id='{0}'.format(p_id))
-    html = site.text # GET HTML OF THE SITE
-    u_id = "id=\"{}\"".format(p_id) # ID SEARCH
-    if u_id in html:
+    print(u_id)
+    if u_id != []:
         u_id = "The element IS on the page"
     else:
         u_id = "The element ISN'T on the page"
@@ -103,7 +93,6 @@ def byid(p_url, p_id):
 
 
 #COMAND 4 - FORMATS .XLSX DOCUMENT
-#FORMATS THIS FILE BY ADDING THE NECESSARY SHEETS, DELETING UNNECESSARY ONES
 def excel():
     file = 'TestResults.xlsx'
     lst = load_workbook(file) #It is depend on save and close command
@@ -119,13 +108,12 @@ def excel():
     lst['CodePostResults'].append(["Url","Returned Code"])
     lst['ElementById'].append(["Given Id","Url","Result"])
     lst['ElementByTag'].append(["Given Tag","Url","Result"])
-    lst['ScenarioResults'].append(["Scenario number","Url","Get requests", "Post requests", "Finded by id","Finded by tag"])
+    lst['ScenarioResults'].append(["Url","Get requests", "Post requests", "Finded by id","Finded by tag"])
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
 
     
 #COMMAND 5 - ELEMENT BY TAG
-#RETURNS THE HTML ELEMENT FROM YOUR GET REQUESTS TO THE URL BY TAG
 def bytag(p_url, p_tag):
     url = p_url
     site = requests.get(url)
@@ -155,7 +143,6 @@ def create(p_name):
         "\t\tCreate scenario params. If you want skip a command enter 0, else 1\n\n"
         "\t\t\t\tPLEASE FILL IN THE FORM\n\n"
         )
-        id = str(input('\tEnter scenario id: '))
         url = str(input('\tEnter url: '))
         get = "0" 
         post = "0" 
@@ -173,14 +160,11 @@ def create(p_name):
         if get == "0" and post == "0" and htmlid == "0" and htmltag == "0":
             print("\t\tEmpty scenatio won't be added\n")
             create(p_name)
-        data = {"scen" : id, "url" : url, "get" : get, "post" : post, "htmlid" : htmlid, "htmltag" : htmltag}
-
-        print("\n\t\tYou want create new case? If yes enter any button, else - \"F\"")
-        command = str(input('\t\n'))
+        data = {"url" : url, "get" : get, "post" : post, "htmlid" : htmlid, "htmltag" : htmltag}
+        command = str(input("\n\t\tYou want create new case? If yes enter any button, else - \"F\"\n"))
         if command == 'F' or command == "f":
             json.dump(data, file)
-            file.write('\n')
-            file.write(']')
+            file.write('\n'']')
             file.close()
             break
         else:
@@ -198,12 +182,11 @@ def show(p_name):
     work()
 
 
-#COMMAND 8 - READ SCENARIO MODEL (PROTOTYPE)
+#COMMAND 8 - READ SCENARIO MODEL
 def read(p_name):
     file = open("{0}.json".format(p_name), "r")
     file = json.load(file) 
     for lines in file:
-        id = lines['scen']
         url = lines['url']
         code_get = lines['get']
         if code_get == "1":
@@ -222,9 +205,7 @@ def read(p_name):
             site = requests.get(url)
             soup = BeautifulSoup(site.text, 'html.parser')
             u_id = soup.find_all(id='{0}'.format(u_id))
-            html = site.text # GET HTML OF THE SITE
-            u_id = "id=\"{}\"".format(u_id) # ID SEARCH
-            if u_id in html:
+            if u_id != []:
                 u_id = "The element IS on the page"
             else:
                 u_id = "The element ISN'T on the page"
@@ -244,10 +225,11 @@ def read(p_name):
         file = 'TestResults.xlsx' #Create or open file with that name
         lst = load_workbook(file) #It is depend on save and close command
         xlsx = lst['ScenarioResults'] #List in 'TestResult.xlsx'
-        xlsx.append([id,url,code_get,code_post,u_id,u_tag]) #Adding that data in xlsx file
+        xlsx.append([url,code_get,code_post,u_id,u_tag]) #Adding that data in xlsx file
         lst.save(file) #REMEMBER THE WRITING RULES
         lst.close()
-
+    print("\n\t\tAll the scenario was processed\n")
+    work()
 
 #COMMAND ANSWER - ERROR MESSAGES
 def err():
@@ -258,8 +240,7 @@ def err():
 #COMMAND MAIN - START 
 #STARTS A FUNCTION TREE
 def work():
-    order = str(input())
-    print('\n')
+    order = str(input('\n'))
     orderarray = order.split(" ") # Вreaking the request into a command and a URL
     match orderarray[0]: # Getting the operation from the request
         case "-help":
@@ -290,13 +271,6 @@ def work():
                     bytag(p_url, p_tag)
                 except Exception:
                     err()
-        case"-byclass":
-                try:
-                    p_url = orderarray[1]
-                    p_class = orderarray[2]
-                    bytag(p_url, p_class)
-                except Exception:
-                    err()
         case"-create":
                 try:
                     p_name = orderarray[1]
@@ -311,9 +285,8 @@ def work():
                     err()
         case"-read":
                 try:
-                    if orderarray[2] == "all":
-                        p_name = orderarray[1]
-                        read(p_name)
+                    p_name = orderarray[1]
+                    read(p_name)
                 except Exception:
                     err()
         case"-exit":
@@ -331,4 +304,3 @@ if "ScenarioResults" != lst.sheetnames[0]:
     excel()
 
 work()
-
