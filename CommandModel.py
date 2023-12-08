@@ -14,6 +14,7 @@ def help():
     print(
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
+    "\t-exit -- ending a program\n" +
     "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
     "\t-code_post <url> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
@@ -137,10 +138,10 @@ def bytag(p_url, p_tag):
     work()
 
 
-#CREATE SCENARIO MODEL (PROTOTYPE)
+#COMMAND 6 - CREATE SCENARIO MODEL
 def create(p_name):
     file = open(f"{p_name}.json", 'w')
-    file.write('[')
+    file.write('[''\n')
     command = "0"
     while True:
         id = str(input('\tEnter scenario id: '))
@@ -148,15 +149,15 @@ def create(p_name):
         print(
             "\t\t\tNow pleaase write all command we have to do:\n\n" +
         "\t\t\tCOMMAND: (ATTENTION, THESE COMMANDS ARE DIFFERENT!)\n\n"
-        "\tcode_get-<url> -- Returns the code from your get requests to the url\n" +
-        "\tcode_post-<url> -- Returns the code from your post requests to the url\n" +
-        "\tbyid-<url>-<id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
-        "\tbytag-<url>-<tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n\n" +
+        "\tcode_get -- Returns the code from your get requests to the url\n" +
+        "\tcode_post -- Returns the code from your post requests to the url\n" +
+        "\tbyid-<id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
+        "\tbytag-<tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n\n" +
         "\t\tEXAMPLE: code_get-https://stackoverflow.com/ code_post-https://www.google.com/"
         )
         operation = str(input('\tCreate commands:\n\t')).split(" ")
         data = {"scen" : id, "url" : url, "command" : operation}
-        print("You want create new case? If yes enter any button, else - \"F\"")
+        print("\n\t\tYou want create new case? If yes enter any button, else - \"F\"")
         command = str(input('\t\n'))
         if command == 'F' or command == 'f':
             json.dump(data, file)
@@ -168,10 +169,18 @@ def create(p_name):
             json.dump(data, file)
             file.write(',\n')
             
-    
+
+#COMAND 7 - SHOW ALL THE FILE OF SCENARIO
+def show(p_name):
+    with open("{0}.json".format(p_name), "r") as file:
+        print("\t\tYour scenario:\n")
+        for elem in file:
+            print(elem)
+    file.close()
+    work()
 
 
-#READ SCENARION MODEL (PROTOTYPE)
+#COMMAND 8 - READ SCENARIO MODEL (PROTOTYPE)
 def read(order):
     f_name = order[1]
     file = open(f"{f_name}.json", "r")
@@ -179,7 +188,13 @@ def read(order):
         print(lines)
 
 
-#COMMAND N - START 
+#COMMAND ANSWER - ERROR MESSAGES
+def err():
+    print("\t\tInvalid value\n\tTry again or use -help for help\n")
+    work()
+
+
+#COMMAND MAIN - START 
 #STARTS A FUNCTION TREE
 def work():
     order = str(input())
@@ -187,35 +202,60 @@ def work():
     orderarray = order.split(" ") # Вreaking the request into a command and a URL
     match orderarray[0]: # Getting the operation from the request
         case "-help":
-                help()
+                try:
+                    help()
+                except Exception:
+                    err()
         case"-code_get":
-                p_url = orderarray[1]
-                code_get(p_url)
+                try:
+                    p_url = orderarray[1]
+                    code_get(p_url)
+                except Exception:
+                    err()
         case"-code_post":
                 p_url = orderarray[1]
                 code_post(p_url)
         case"-byid":
-                p_url = orderarray[1]
-                p_id = orderarray[2]
-                byid(p_url, p_id)
+                try:
+                    p_url = orderarray[1]
+                    p_id = orderarray[2]
+                    byid(p_url, p_id)
+                except Exception:
+                    err()
         case"-bytag":
-                p_url = orderarray[1]
-                p_tag = orderarray[2]
-                bytag(p_url, p_tag)
+                try:
+                    p_url = orderarray[1]
+                    p_tag = orderarray[2]
+                    bytag(p_url, p_tag)
+                except Exception:
+                    err()
         case"-byclass":
-                p_url = orderarray[1]
-                p_class = orderarray[2]
-                bytag(p_url, p_class)
+                try:
+                    p_url = orderarray[1]
+                    p_class = orderarray[2]
+                    bytag(p_url, p_class)
+                except Exception:
+                    err()
         case"-create":
-                p_name = orderarray[1]
-                create(p_name)
+                try:
+                    p_name = orderarray[1]
+                    create(p_name)
+                except Exception:
+                    err()
+        case"-show":
+                try:
+                    p_name = orderarray[1]
+                    show(p_name)
+                except Exception:
+                    err()
+        case"-exit":
+                return 0
         case _:
                 print("\tError\n" + "\tWe're sorry, but this command doesn't exist, please use -help")
                 work()
 
 
-
-
+#MAIN !!!
 print("\tWelcome, The program is running, enter the command or -help for manual to program\n")
 lst = load_workbook('TestResults.xlsx')
 if "ScenarioResults" != lst.sheetnames[0]:

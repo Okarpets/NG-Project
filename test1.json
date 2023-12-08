@@ -1,0 +1,4 @@
+[
+{"scen": "1", "url": "2", "command": ["code_get", "code_post"]},
+{"scen": "2", "url": "3", "command": ["code_post", "code_get"]}
+]
