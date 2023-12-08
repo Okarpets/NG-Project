@@ -14,13 +14,15 @@ def help():
     print(
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
-    "\t-exit -- ending a program\n" +
+    "\t-exit -- Exits the program\n" +
     "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
     "\t-code_post <url> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <file_name> -- Create scenario in document\n" +
-    "\t-read <file_name> -- Read document with scenario\n"  
+    "\t-read <file_name> <type>-- Read document with scenario\n" +
+    "\t\tTypes: all (Process all scenarios), <id> (One of all)\n" +
+    "\t\tEXAMPLES: -read all OR -read 23 (Process only 23rd scenario)"
     )
     work()
 
@@ -87,14 +89,14 @@ def byid(p_url, p_id):
     html = site.text # GET HTML OF THE SITE
     u_id = "id=\"{}\"".format(p_id) # ID SEARCH
     if u_id in html:
-        reslt = "The element IS on the page"
+        u_id = "The element IS on the page"
     else:
-        reslt = "The element ISN'T on the page"
-    print('\t' + reslt + '\n')
+        u_id = "The element ISN'T on the page"
+    print('\t' + u_id + '\n')
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
-    #xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
-    #xlsx.append([p_id,url,reslt]) #Adding that data in xlsx file
+    xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
+    xlsx.append([p_id,url,u_id]) #Adding that data in xlsx file
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
     work()
@@ -112,10 +114,12 @@ def excel():
     lst.create_sheet('CodeGetResults') # CREATE LISTS
     lst.create_sheet('CodePostResults')
     lst.create_sheet('ElementById')
+    lst.create_sheet('ElementByTag')
     lst['CodeGetResults'].append(["Url","Returned Code"])
     lst['CodePostResults'].append(["Url","Returned Code"])
     lst['ElementById'].append(["Given Id","Url","Result"])
-    lst['ScenarioResults'].append(["Scenario number","Url","Looked by id","Get requests","Post requests"])
+    lst['ElementByTag'].append(["Given Tag","Url","Result"])
+    lst['ScenarioResults'].append(["Scenario number","Url","Get requests", "Post requests", "Finded by id","Finded by tag"])
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
 
@@ -127,12 +131,15 @@ def bytag(p_url, p_tag):
     site = requests.get(url)
     soup = BeautifulSoup(site.text, 'html.parser')
     u_tag = soup.find_all('{0}'.format(p_tag))
-    print(u_tag)
+    if u_tag == []:
+        u_tag = "Tag ISN'T HERE"
     print('\t' + str(u_tag) + '\n')
+    if u_tag != []:
+        u_tag = "Tag IS here"
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
-    #xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
-    #xlsx.append([p_tag,url,reslt]) #Adding that data in xlsx file
+    xlsx = lst['ElementByTag'] #List in 'TestResult.xlsx'
+    xlsx.append([p_tag,url,u_tag]) #Adding that data in xlsx file
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
     work()
@@ -142,29 +149,40 @@ def bytag(p_url, p_tag):
 def create(p_name):
     file = open(f"{p_name}.json", 'w')
     file.write('[''\n')
-    command = "0"
     while True:
+        print(
+        "\t\t\tNow pleaase write all command we have to do:\n" +
+        "\t\tCreate scenario params. If you want skip a command enter 0, else 1\n\n"
+        "\t\t\t\tPLEASE FILL IN THE FORM\n\n"
+        )
         id = str(input('\tEnter scenario id: '))
         url = str(input('\tEnter url: '))
-        print(
-            "\t\t\tNow pleaase write all command we have to do:\n\n" +
-        "\t\t\tCOMMAND: (ATTENTION, THESE COMMANDS ARE DIFFERENT!)\n\n"
-        "\tcode_get -- Returns the code from your get requests to the url\n" +
-        "\tcode_post -- Returns the code from your post requests to the url\n" +
-        "\tbyid-<id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
-        "\tbytag-<tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n\n" +
-        "\t\tEXAMPLE: code_get-https://stackoverflow.com/ code_post-https://www.google.com/"
-        )
-        operation = str(input('\tCreate commands:\n\t')).split(" ")
-        data = {"scen" : id, "url" : url, "command" : operation}
+        get = "0" 
+        post = "0" 
+        htmlid = "0" 
+        htmltag = "0" 
+        command = "0"
+        if input('\tDo you want do get requests?\n') == "1":
+            get = "1"
+        if input('\tDo you want do post requests?\n') == "1":
+            post = "1"
+        if input('\tDo you want search element by id?\n') == "1":
+            htmlid = str(input('\tEnter id: '))
+        if input('\tDo you want search element by tag?\n') == "1":
+            htmltag = str(input('\tEnter tag: '))
+        if get == "0" and post == "0" and htmlid == "0" and htmltag == "0":
+            print("\t\tEmpty scenatio won't be added\n")
+            create(p_name)
+        data = {"scen" : id, "url" : url, "get" : get, "post" : post, "htmlid" : htmlid, "htmltag" : htmltag}
+
         print("\n\t\tYou want create new case? If yes enter any button, else - \"F\"")
         command = str(input('\t\n'))
-        if command == 'F' or command == 'f':
+        if command == 'F' or command == "f":
             json.dump(data, file)
             file.write('\n')
             file.write(']')
             file.close()
-            work()
+            break
         else:
             json.dump(data, file)
             file.write(',\n')
@@ -181,11 +199,54 @@ def show(p_name):
 
 
 #COMMAND 8 - READ SCENARIO MODEL (PROTOTYPE)
-def read(order):
-    f_name = order[1]
-    file = open(f"{f_name}.json", "r")
+def read(p_name):
+    file = open("{0}.json".format(p_name), "r")
+    file = json.load(file) 
     for lines in file:
-        print(lines)
+        id = lines['scen']
+        url = lines['url']
+        code_get = lines['get']
+        if code_get == "1":
+            site = requests.get(url)
+            code_get = site.status_code
+        else:
+            code_get = "The operation was not requested"
+        code_post = lines['post']
+        if code_post == "1":
+            site = requests.post(url)
+            code_post = site.status_code
+        else:
+            code_post = "The operation was not requested"
+        u_id = lines['htmlid']
+        if u_id != "0":
+            site = requests.get(url)
+            soup = BeautifulSoup(site.text, 'html.parser')
+            u_id = soup.find_all(id='{0}'.format(u_id))
+            html = site.text # GET HTML OF THE SITE
+            u_id = "id=\"{}\"".format(u_id) # ID SEARCH
+            if u_id in html:
+                u_id = "The element IS on the page"
+            else:
+                u_id = "The element ISN'T on the page"
+        else:
+            u_id = "The operation was not requested"
+        u_tag = lines['htmltag']
+        if u_tag != "0":
+            site = requests.get(url)
+            soup = BeautifulSoup(site.text, 'html.parser')
+            u_tag = soup.find_all('{0}'.format(u_tag))
+            if u_tag == []:
+                u_tag = "Tag ISN'T HERE"
+            if u_tag != []:
+                u_tag = "Tag IS here"
+        else:
+            u_tag = "The operation was not requested"
+        file = 'TestResults.xlsx' #Create or open file with that name
+        lst = load_workbook(file) #It is depend on save and close command
+        xlsx = lst['ScenarioResults'] #List in 'TestResult.xlsx'
+        xlsx.append([id,url,code_get,code_post,u_id,u_tag]) #Adding that data in xlsx file
+        lst.save(file) #REMEMBER THE WRITING RULES
+        lst.close()
 
 
 #COMMAND ANSWER - ERROR MESSAGES
@@ -248,8 +309,16 @@ def work():
                     show(p_name)
                 except Exception:
                     err()
+        case"-read":
+                try:
+                    if orderarray[2] == "all":
+                        p_name = orderarray[1]
+                        read(p_name)
+                except Exception:
+                    err()
         case"-exit":
-                return 0
+                    print("Exit the program")
+                    return 0
         case _:
                 print("\tError\n" + "\tWe're sorry, but this command doesn't exist, please use -help")
                 work()
