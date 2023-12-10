@@ -262,8 +262,7 @@ def work():
                     err()
         case"-code_get":
                 try:
-                    p_url = orderarray[1]
-                    code_get(p_url)
+                    code_get(orderarray)
                 except Exception:
                     err()
         case"-code_post":
