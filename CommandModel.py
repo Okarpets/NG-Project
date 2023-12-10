@@ -13,11 +13,11 @@ def help():
     "\t-help -- Write a manual for using the program\n" +
     "\t-exit -- Exits the program\n" +
     "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
-    "\t-code_post <url> -- Returns the code from your post requests to the url\n" +
+    "\t-code_post <url> <json_file name/without> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
-    "\t-create <file_name> -- Create scenario in document\n" +
-    "\t-read <file_name> -- Read and process all scenario in document\n"
+    "\t-create <json_name> -- Create scenario in document\n" +
+    "\t-read <json_name> -- Read and process all scenario in document\n"
     )
     work()
 
@@ -47,16 +47,28 @@ def code_get(p_url):
 
 
 #COMMAND 2 - RETURN POST CODE REQUESTS
-def code_post(p_url):
+def code_post(orderarray):
     try:
-        url = p_url
-        try:
-            site = requests.post(url)
-        except Exception:
-            print("\tInvalid values\n")
-            work()
-        code = site.status_code # CODE OF POST REQUEST
-        print("\tReturned сode: " + str(code) + '\n')
+        url = orderarray[1]
+        post = orderarray[2]
+        if post == "without":
+            try:
+                site = requests.post(url)
+            except Exception:
+                print("\tInvalid values\n")
+                work()
+            code = site.status_code # CODE OF POST REQUEST
+            print("\tReturned сode: " + str(code) + '\n')
+        else:
+            try:
+                file = open("{}.json".format(post), "r")
+                u_data = json.load(file)
+                site = requests.post(url, data=u_data)
+            except Exception:
+                print("\tInvalid values\n")
+                work()
+            code = site.status_code # CODE OF POST REQUEST
+            print("\tReturned сode: " + str(code) + '\n')
     except ConnectionError: 
         print("\tConnection error\n")
     except Timeout:
@@ -255,8 +267,7 @@ def work():
                 except Exception:
                     err()
         case"-code_post":
-                p_url = orderarray[1]
-                code_post(p_url)
+                code_post(orderarray)
         case"-byid":
                 try:
                     p_url = orderarray[1]
