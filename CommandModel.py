@@ -16,8 +16,9 @@ def help():
     "\t-code_post <url> <json_file name/without> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
-    "\t-create <json_name> -- Create scenario in document\n" +
-    "\t-read <json_name> -- Read and process all scenario in document\n"
+    "\t-create <json_name> -- Create scenario in a document\n" +
+    "\t-read <json_name> -- Read and process all scenario in a document\n" +
+    "\t-show <josn_name> -- Show you all scenario in the file\n"
     )
     work()
 
