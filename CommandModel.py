@@ -18,7 +18,7 @@ def help():
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <json_name> -- Create scenario in a document\n" +
     "\t-read <json_name> -- Read and process all scenario in a document\n" +
-    "\t-show <josn_name> -- Show you all scenario in the file\n"
+    "\t-show <json_name> -- Show you all scenario in the file\n"
     )
     work()
 
@@ -263,7 +263,7 @@ def work():
                     err()
         case"-code_get":
                 try:
-                    code_get(orderarray)
+                    code_get(orderarray[1])
                 except Exception:
                     err()
         case"-code_post":
