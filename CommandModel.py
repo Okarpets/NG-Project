@@ -67,7 +67,7 @@ def code_get(orderarray):
                         print("\tReturned: " + order + '\n')
                     except Exception:
                         order = "Uncorrectly requests"
-                        print("\tUncorrectly requests\n")
+                        print("\t{0}\n".format(order))
                         work()
     except ConnectionError: 
         print("\tConnection error\n")
@@ -92,8 +92,8 @@ def code_post(orderarray):
             except Exception:
                 print("\tInvalid values\n")
                 work()
-            code = site.status_code # CODE OF POST REQUEST
-            print("\tReturned сode: " + str(code) + '\n')
+            order = site.status_code # CODE OF POST REQUEST
+            print("\tReturned сode: " + str(order) + '\n')
         if len(orderarray) == 3:
             post = orderarray[2]
             try:
@@ -101,10 +101,10 @@ def code_post(orderarray):
                 u_data = json.load(file)
                 site = requests.post(url, data=json.dumps(u_data))
             except Exception:
-                print("\tInvalid values\n")
+                print("\tUncorrectly requests\n")
                 work()
-            code = site.status_code # CODE OF POST REQUEST
-            print("\tReturned сode: " + str(code) + '\n')
+            order = site.status_code # CODE OF POST REQUEST
+            print("\tReturned сode: " + str(order) + '\n')
     except ConnectionError: 
         print("\tConnection error\n")
     except Timeout:
@@ -112,7 +112,7 @@ def code_post(orderarray):
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodePostResults'] #List in 'TestResult.xlsx'
-    xlsx.append([url,code]) #Adding that data in xlsx file
+    xlsx.append([url,order]) #Adding that data in xlsx file
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
     work()
@@ -155,7 +155,7 @@ def excel():
     lst['CodePostResults'].append(["Url","Order"])
     lst['ElementById'].append(["Given Id","Url","Result"])
     lst['ElementByTag'].append(["Given Tag","Url","Result"])
-    lst['ScenarioResults'].append(["Url","Get requests", "Post requests", "Finded by id","Finded by tag"])
+    lst['ScenarioResults'].append(["Scenario ID","Url","Get requests", "Post requests", "Find-order by id","Find-order by tag"])
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
 
@@ -286,20 +286,46 @@ def read(p_name):
     file = open("{0}.json".format(p_name), "r")
     file = json.load(file) 
     for lines in file:
+
+        scen_id = lines['id']
         url = lines['url']
         code_get = lines['get']
+        get_params = lines['params']
+        code_post = lines['post']
+        post_data = lines['data']
+        u_id = lines['htmlid']
+        u_tag = lines['htmltag']
+
         if code_get == "1":
             site = requests.get(url)
-            code_get = site.status_code
+            get_order = site.status_code
+        if code_get == "2":
+            try:
+                file = open("{}.json".format(get_params), "r")
+                u_data = json.load(file)
+                site = requests.get(url, params=json.dumps(u_data))
+                get_order = site.status_code
+            except Exception:
+                get_order = "Uncorrectly requests"
         else:
-            code_get = "The operation was not requested"
-        code_post = lines['post']
+            get_order = "The operation was not requested"
+
+
         if code_post == "1":
             site = requests.post(url)
-            code_post = site.status_code
+            post_order = site.status_code
+        if code_post == "2":
+            try:
+                file = open("{}.json".format(post_data), "r")
+                u_data = json.load(file)
+                site = requests.post(url, data=json.dumps(u_data))
+                post_order = site.status_code
+            except Exception:
+                post_order = "Uncorrectly requests"
         else:
-            code_post = "The operation was not requested"
-        u_id = lines['htmlid']
+            post_order = "The operation was not requested"
+        
+
         if u_id != "0":
             site = requests.get(url)
             soup = BeautifulSoup(site.text, 'html.parser')
@@ -310,7 +336,8 @@ def read(p_name):
                 u_id = "The element ISN'T on the page"
         else:
             u_id = "The operation was not requested"
-        u_tag = lines['htmltag']
+        
+
         if u_tag != "0":
             site = requests.get(url)
             soup = BeautifulSoup(site.text, 'html.parser')
@@ -324,7 +351,7 @@ def read(p_name):
         file = 'TestResults.xlsx' #Create or open file with that name
         lst = load_workbook(file) #It is depend on save and close command
         xlsx = lst['ScenarioResults'] #List in 'TestResult.xlsx'
-        xlsx.append([url,code_get,code_post,u_id,u_tag]) #Adding that data in xlsx file
+        xlsx.append([scen_id,url,get_order,post_order,u_id,u_tag]) #Adding that data in xlsx file
         lst.save(file) #REMEMBER THE WRITING RULES
         lst.close()
     print("\n\t\tAll the scenario was processed\n")
