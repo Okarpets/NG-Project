@@ -18,7 +18,8 @@ def help():
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <json_name> -- Create scenario in a document\n" +
     "\t-read <json_name> -- Read and process all scenario in a document\n" +
-    "\t-show <json_name> -- Show you all scenario in the file\n"
+    "\t-show <json_name> <id> -- Show you all scenario in the file OR one scenario in the file by id\n" +
+    "\t\tIf you don't enter id -show test show you all scenarios"
     )
     work()
 
@@ -186,13 +187,23 @@ def create(p_name):
             
 
 #COMAND 7 - SHOW ALL THE FILE OF SCENARIO
-def show(p_name):
+def show(p_name, p_id):
     with open("{0}.json".format(p_name), "r") as file:
+        if p_id == "0":
+            print("\t\tYour scenario:\n")
+            for elem in file:
+                print(elem)
+            file.close()
+            work()
+        js_file = json.load(file)
+        file.close()
         print("\t\tYour scenario:\n")
-        for elem in file:
-            print(elem)
-    file.close()
-    work()
+        for elem in js_file:
+            if str(elem['id']) == str(p_id):
+                print(elem)
+                work()
+            print("Scenario with that id wasn't found or it doesn't exist")
+        work()
 
 
 #COMMAND 8 - READ SCENARIO MODEL
@@ -290,8 +301,13 @@ def work():
                     err()
         case"-show":
                 try:
-                    p_name = orderarray[1]
-                    show(p_name)
+                    if len(orderarray) == 2:
+                        p_name = orderarray[1]
+                        show(p_name, "0")
+                    if len(orderarray) == 3:
+                        p_name = orderarray[1]
+                        p_id = orderarray[2]
+                        show(p_name, p_id)
                 except Exception:
                     err()
         case"-read":

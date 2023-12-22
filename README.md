@@ -17,7 +17,7 @@
 
 - `-bytag <url> <tag>` - Returns the STATIC HTML element from your get requests to the url by tag
 
-- `-show <josn_name>` - Show you all scenario in the file
+- `-show <json_name>` - Show you all scenario in the file
 
 ## Functions for interacting with scenarios
 
