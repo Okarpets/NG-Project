@@ -12,8 +12,9 @@ def help():
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
     "\t-exit -- Exits the program\n" +
-    "\t-code_get <url> -- Returns the code from your get requests to the url\n" +
-    "\t-code_post <url> <json_file name/without> -- Returns the code from your post requests to the url\n" +
+    "\t-code_get <url> <json_file OR type> -- Returns the code from your get requests to the url\n" +
+    "\t\tCommands: headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)\n" +
+    "\t-code_post <url> <json_file OR nothing> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <json_name> -- Create scenario in a document\n" +
@@ -25,16 +26,49 @@ def help():
 
 
 #COMMAND 1 - RETURN GET CODE REQUESTS
-def code_get(p_url):
+def code_get(orderarray):
+    p_url = orderarray[1]
     try:
-        url = p_url
-        try:
-            site = requests.get(url)
-        except Exception:
-            print("\tInvalid values\n")
-            work()
-        code = site.status_code # CODE OF GET REQUEST
-        print("\tReturned сode: " + str(code) + '\n')
+        if len(orderarray) == 2:
+            try:
+                site = requests.get(p_url)
+            except Exception:
+                print("\tInvalid values\n")
+                work()
+            order = site.status_code # CODE OF GET REQUEST
+            print("\tReturned сode: " + str(order) + '\n')
+        if len(orderarray) == 3:
+            site = requests.get(p_url)   
+            match orderarray[2]: # Getting the operation from the request
+                case "headers":
+                    try:
+                        print(site.headers)
+                        work()
+                    except Exception:
+                        err()
+                case "text":
+                    try:
+                        print(site.text)
+                        work()
+                    except Exception:
+                        err()
+                case "content":
+                    try:
+                        print(site.content)
+                        work()
+                    except Exception:
+                        err()
+                case _:
+                    try:
+                        file = open("{}.json".format(orderarray[2]), "r")
+                        u_data = json.load(file)
+                        site = requests.get(p_url, params=json.dumps(u_data))
+                        order = ("The request was processed correctly")
+                        print("\tReturned: " + order + '\n')
+                    except Exception:
+                        order = "Uncorrectly requests"
+                        print("\tUncorrectly requests\n")
+                        work()
     except ConnectionError: 
         print("\tConnection error\n")
     except Timeout:
@@ -42,7 +76,7 @@ def code_get(p_url):
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodeGetResults'] #List in 'TestResult.xlsx'
-    xlsx.append([url,code]) #Adding that data in xlsx file
+    xlsx.append([p_url,order]) #Adding that data in xlsx file
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
     work()
@@ -52,8 +86,7 @@ def code_get(p_url):
 def code_post(orderarray):
     try:
         url = orderarray[1]
-        post = orderarray[2]
-        if post == "without":
+        if len(orderarray) == 2:
             try:
                 site = requests.post(url)
             except Exception:
@@ -61,11 +94,13 @@ def code_post(orderarray):
                 work()
             code = site.status_code # CODE OF POST REQUEST
             print("\tReturned сode: " + str(code) + '\n')
-        else:
+        if len(orderarray) == 3:
+            post = orderarray[2]
             try:
                 file = open("{}.json".format(post), "r")
                 u_data = json.load(file)
-                site = requests.post(url, data=u_data)
+                print(u_data)
+                site = requests.post(url, data=json.dumps(u_data))
             except Exception:
                 print("\tInvalid values\n")
                 work()
@@ -75,7 +110,6 @@ def code_post(orderarray):
         print("\tConnection error\n")
     except Timeout:
         print("\tThe request timed out\n")
-
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodePostResults'] #List in 'TestResult.xlsx'
@@ -202,7 +236,7 @@ def show(p_name, p_id):
             if str(elem['id']) == str(p_id):
                 print(elem)
                 work()
-            print("Scenario with that id wasn't found or it doesn't exist")
+        print("Scenario with that id wasn't found or it doesn't exist")
         work()
 
 
@@ -273,10 +307,7 @@ def work():
                 except Exception:
                     err()
         case"-code_get":
-                try:
-                    code_get(orderarray[1])
-                except Exception:
-                    err()
+                code_get(orderarray)
         case"-code_post":
                 code_post(orderarray)
         case"-byid":
