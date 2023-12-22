@@ -9,9 +9,11 @@
 
 - `-exit` - Exits the program
 
-- `-code_get <url>` - Returns the code from your get requests to the url
+- `-code_get <url> <json_file OR typical command OR nothing>` - Returns the code from your get requests to the url
+ 
+ `TC : headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)`
 
-- `-code_post <url> <json_file name/without>` - Returns the code from your post requests to the url
+- `-code_post <url> <json_file OR nothing>` - Returns the code from your post requests to the url
 
 - `-byid <url> <id>` - Returns the STATIC HTML element from your get requests to the url by id
 
@@ -23,7 +25,11 @@
 
 - `-create <json_name>` - Create scenario in a document
 
-- `-read <json_name>` - Read and process all scenario in a document
+- `-read <json_name> <id>` - Read and process all scenario in a document OR one scenario in the file by scenario id
+
+- `-show <json_name> <id>` -- Show you all scenario in the file OR one scenario in the file by secanrio id
+
+ `If you don't enter id -show test show you all scenarios`
 
 ## How to use
 **1.** Create excel file called *"TestResults"*.  
@@ -35,15 +41,11 @@
 All scenarios are accepted in json format, if you don't want to write them manually use `-create <json_name>` to create scenarios. In case you want to create them yourself, they must correspond to this structure:
 
 ```bash
-  [
-  {"url": "https://text.ru/", "get": "1", "post": "1", "htmlid": "master-menu", "htmltag": "0"},
-  {"url": "https://ecostyle.ua/pay/login.php?account=&phone=", "get": "0", "post": "0", "htmlid": "contact-form-7-js-extra", "htmltag": "div"}
-  ]
+    [
+    {"id": 1, "url": "https://dada.com.ua/", "get": "1", "params": "0", "post": "1", "data": "0", "htmlid": "op-er-t", "htmltag": "p"},
+    {"id": 2, "url": "https://elit-ampir.com.ua/ua/p1212509987-molding-home-decor.html", "get": "0", "params": "0", "post": "0", "data": "0", "htmlid": "tr-op", "htmltag": "a"},
+    {"id": 3, "url": "https://www.youtube.com/watch?v=HfBJ0_1c4PU", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "0", "htmltag": "div"}
+    ]
 ```
 
 Operations in which there is no additional data take the form 0 or 1, if they need to be done during the `-read <json_name>` command, then you need to set 1, but if processing of this command is not needed, use 0. For example, in the first line commands are processed: `-code_get`, `-code_post`, `-byid <url> <id>` and command `-bytag <url> <tag>` - aren't processed.
-
-## If you notice a bug or critical error
-### Contact information for feedback****
-Gmail: karpetsolekasandrschool10@gmail.com		
-GitHub: https://github.com/Okarpets/

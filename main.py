@@ -12,8 +12,8 @@ def help():
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
     "\t-exit -- Exits the program\n" +
-    "\t-code_get <url> <json_file OR type OR nothing> -- Returns the code from your get requests to the url\n" +
-    "\t\tCommands: headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)\n" +
+    "\t-code_get <url> <json_file OR \"TC\" OR nothing> -- Returns the code from your get requests to the url\n" +
+    "\t\t\"TC\" : headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)\n" +
     "\t-code_post <url> <json_file OR nothing> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
