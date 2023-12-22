@@ -1,8 +1,16 @@
 1. The result should be in Excel file format
 2. Contents of the Excel file: a list of all tests that were carried out on the site
 3. Testing will be carried out based on user-created “scenarios”
-4. "Scenarios" format - yaml or json // I chose Json
+4. "Scenarios" format - yaml or json // Json was chosen
 5. Functions:
 	- The code that the site returns
 	- Search for a specified html element on a website
 	
+
+1. Результат должен быть в формате файла Excel.
+2. Содержимое файла Excel: список всех тестов, которые проводились на сайте.
+3. Тестирование будет проводиться на основе созданных пользователем «сценариев».
+4. Формат «Сценариев» — yaml или json // Был выбран Json
+5. Функции:
+- Код, который возвращает сайт
+- Поиск указанного элемента HTML на веб-сайте.

@@ -11,7 +11,7 @@ def help():
     print(
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
-    "\t-exit -- Exits the program\n" +
+    "\t-exit -- End program execution\n" +
     "\t-code_get <url> <json_file OR \"TC\" OR nothing> -- Returns the code from your get requests to the url\n" +
     "\t\t\"TC\" : headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)\n" +
     "\t-code_post <url> <json_file OR nothing> -- Returns the code from your post requests to the url\n" +
@@ -32,10 +32,10 @@ def code_get(orderarray):
             try:
                 site = requests.get(p_url)
             except Exception:
-                print("\tInvalid values\n")
+                print("\t\tInvalid values\n")
                 work()
             order = site.status_code # CODE OF GET REQUEST
-            print("\tReturned сode: " + str(order) + '\n')
+            print("\t\tReturned сode: " + str(order) + '\n')
         if len(orderarray) == 3:
             site = requests.get(p_url)   
             match orderarray[2]: # Getting the operation from the request
@@ -63,15 +63,15 @@ def code_get(orderarray):
                         u_data = json.load(file)
                         site = requests.get(p_url, params=json.dumps(u_data))
                         order = ("The request was processed correctly")
-                        print("\tReturned: " + order + '\n')
+                        print("\t\tReturned: " + order + '\n')
                     except Exception:
                         order = "Uncorrectly requests"
-                        print("\t{0}\n".format(order))
+                        print("\t\t{0}\n".format(order))
                         work()
     except ConnectionError: 
-        print("\tConnection error\n")
+        print("\t\tConnection error\n")
     except Timeout:
-        print("\tThe request timed out\n")
+        print("\t\tThe request timed out\n")
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodeGetResults'] #List in 'TestResult.xlsx'
@@ -88,10 +88,10 @@ def code_post(orderarray):
             try:
                 site = requests.post(url)
             except Exception:
-                print("\tInvalid values\n")
+                print("\t\tInvalid values\n")
                 work()
             order = site.status_code # CODE OF POST REQUEST
-            print("\tReturned сode: " + str(order) + '\n')
+            print("\t\tReturned сode: " + str(order) + '\n')
         if len(orderarray) == 3:
             post = orderarray[2]
             try:
@@ -99,14 +99,14 @@ def code_post(orderarray):
                 u_data = json.load(file)
                 site = requests.post(url, data=json.dumps(u_data))
             except Exception:
-                print("\tUncorrectly requests\n")
+                print("\t\tUncorrectly requests\n")
                 work()
             order = site.status_code # CODE OF POST REQUEST
-            print("\tReturned сode: " + str(order) + '\n')
+            print("\t\tReturned сode: " + str(order) + '\n')
     except ConnectionError: 
-        print("\tConnection error\n")
+        print("\t\tConnection error\n")
     except Timeout:
-        print("\tThe request timed out\n")
+        print("\t\tThe request timed out\n")
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodePostResults'] #List in 'TestResult.xlsx'
@@ -124,9 +124,9 @@ def byid(p_url, p_id):
     u_id = soup.find_all(id='{0}'.format(p_id))
     print(u_id)
     if u_id == []:
-        u_id = "The element ISN'T on the page"
+        u_id = "Id ISN'T on the page"
     else:
-        u_id = "The element IS on the page"
+        u_id = "Id IS on the page"
     print('\t' + u_id + '\n')
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
@@ -144,10 +144,10 @@ def bytag(p_url, p_tag):
     soup = BeautifulSoup(site.text, 'html.parser')
     u_tag = soup.find_all('{0}'.format(p_tag))
     if u_tag == []:
-        u_tag = "Tag ISN'T HERE"
+        u_tag = "Tag ISN'T on the page"
         print('\t' + str(u_tag) + '\n')
     else:
-        u_tag = "Tag IS here"
+        u_tag = "Tag IS on the page"
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['ElementByTag'] #List in 'TestResult.xlsx'
@@ -162,7 +162,7 @@ def create(p_name):
     file.write('[''\n')
     scen_id = 1
     while True:
-        print("\tPlease enter url for {0} scenario: ".format(scen_id))
+        print("\tPlease enter url for {0}th scenario: ".format(scen_id))
         url = str(input())
         get = "0" 
         post = "0" 
@@ -180,30 +180,30 @@ def create(p_name):
             "\t\t3 - Element by id\n" +
             "\t\t4 - Element by tag\n\n" +
             "\t\tE - Exit\n" +
-            "\t\tC - Go to next scenario"
+            "\t\tC - Go to next scenario\n"
             )
-            order = str(input("\tSelect a command from \"Command list\"\n"))
+            order = str(input("\t\tSelect a command from \"Command list\"\n"))
             return order
         while oper != "end":
             match under_create(): # Getting the operation from the request
                 case "1":
-                    par_order = str(input("\tDo you want to add params? (Y/ )\n"))
+                    par_order = str(input("\t\tDo you wanna add params? (Y/ )\n"))
                     if par_order == 'Y' or par_order == 'y':
-                        get_params = str(input("\tEnter name of the json-file with params\n"))
+                        get_params = str(input("\t\tEnter name of the json-file with params\n"))
                         get = "2"
                     else:
                         get = "1"
                 case "2":       
-                    par_order = str(input("\tDo you want to add data? (Y/ )\n"))
+                    par_order = str(input("\t\tDo you wanna to add data? (Y/ )\n"))
                     if par_order == 'Y' or par_order == 'y':
-                        post_data = str(input("\tEnter name of the json-file with data\n"))
+                        post_data = str(input("\t\tEnter name of the json-file with data\n"))
                         post = "2"
                     else:
                         post = "1"
                 case "3":                   
-                    htmlid = str(input("\tEnter HTML elemnent id\n"))                       
+                    htmlid = str(input("\t\tEnter HTML elemnent id\n"))                       
                 case "4":                            
-                    htmltag = str(input("\tEnter HTML elemnent tag\n"))
+                    htmltag = str(input("\t\tEnter HTML elemnent tag\n"))
                 case "E":
                     json.dump(data, file)
                     file.write('\n'']')
@@ -212,14 +212,14 @@ def create(p_name):
                     oper_endp = "end"
                 case "C":
                     if get == "0" and post == "0" and htmlid == "0" and htmltag == "0":
-                        print("The scenario will not be added because it is empty")
+                        print("\tThe scenario will not be added because it's empty\n")
                     else:
                         json.dump(data, file)
                         file.write(',\n')
                         scen_id += 1
                         oper = "end"
                 case _:
-                    print("This command doesn't exist, use \"Command list\"")
+                    print("\tThis command doesn't exist, use \"Command list\"\n")
             data = {"id" : scen_id, "url" : url, "get" : get, "params" : get_params, "post" : post, "data" : post_data, "htmlid" : htmlid, "htmltag" : htmltag}
         if oper_endp == "end":
             break
@@ -239,7 +239,7 @@ def read(p_name, p_id):
             for elem in js_file:
                 if str(elem['id']) == str(p_id):
                     handle(elem, p_name)
-        print("\n\tScenario was processed\n")
+        print("\n\t\tScenario was processed\n")
     work()
 
 
@@ -259,7 +259,7 @@ def show(p_name, p_id):
             if str(lines['id']) == str(p_id):
                 print(lines)
                 work()
-        print("Scenario with that id wasn't found or it doesn't exist")
+        print("\n\tScenario with that id wasn't found or it doesn't exist\n")
         work()
 
 
@@ -317,7 +317,7 @@ def handle(lines, p_name):
             except Exception:
                 get_order = "Uncorrectly requests"
         else:
-            get_order = "The operation was not requested"
+            get_order = "The operation wasn't requested"
 
         #POST PART
         if code_post == "1":
@@ -332,7 +332,7 @@ def handle(lines, p_name):
             except Exception:
                 post_order = "Uncorrectly requests"
         else:
-            post_order = "The operation was not requested"
+            post_order = "The operation wasn't requested"
 
         #ID PART
         if u_id != "0":
@@ -340,25 +340,23 @@ def handle(lines, p_name):
             soup = BeautifulSoup(site.text, 'html.parser')
             u_id = soup.find_all(id='{0}'.format(u_id))
             if u_id == []:
-                u_id = "The element ISN'T on the page"
+                u_id = "Id ISN'T on the page"
             else:
-                u_id = "The element IS on the page"
+                u_id = "Id IS on the page"
         else:
-            u_id = "The operation was not requested"
+            u_id = "The operation wasn't requested"
         
         #TAG PART
         if u_tag != "0":
-            print(u_tag)
             site = requests.get(url)
             soup = BeautifulSoup(site.text, 'html.parser')
             u_tag = soup.find_all('{0}'.format(u_tag))
-            print(u_tag)
             if u_tag == []:
-                u_tag = "Tag ISN'T HERE"
+                u_tag = "Tag ISN'T on the page"
             else:
-                u_tag = "Tag IS here"
+                u_tag = "Tag IS on the page"
         else:
-            u_tag = "The operation was not requested"
+            u_tag = "The operation wasn't requested"
         file = 'TestResults.xlsx' #Create or open file with that name
         lst = load_workbook(file) #It is depend on save and close command
         xlsx = lst['ScenarioResults'] #List in 'TestResult.xlsx'
@@ -380,7 +378,7 @@ def work():
                 except Exception:
                     err()
         case"-exit":
-                print("\t\tExit the program")
+                print("\n\t\tEnd program execution")
                 return 0
         case"-code_get":
                 code_get(orderarray)
@@ -429,12 +427,12 @@ def work():
                 except Exception:
                     err()
         case _:
-                print("\tError\n" + "\tWe're sorry, but this command doesn't exist, please use -help")
+                err()
                 work()
 
 
 #MAIN !!!
-print("\tWelcome, The program is running, enter the command or -help for manual to program\n")
+print("\n\t\tWelcome! The program has started. Type the command or -help for programming guidance or use right now\n")
 lst = load_workbook('TestResults.xlsx')
 if "ScenarioResults" != lst.sheetnames[0]:
     excel()

@@ -7,7 +7,7 @@
 
 - `-help` - Write a manual for using the program
 
-- `-exit` - Exits the program
+- `-exit` - End program execution
 
 - `-code_get <url> <json_file OR typical command OR nothing>` - Returns the code from your get requests to the url
  
@@ -27,9 +27,9 @@
 
 - `-read <json_name> <id>` - Read and process all scenario in a document OR one scenario in the file by scenario id
 
-- `-show <json_name> <id>` -- Show you all scenario in the file OR one scenario in the file by secanrio id
+- `-show <json_name> <id>` -- Show you all scenario in the file OR one scenario in the file by scenaio id
 
- `If you don't enter id -show test show you all scenarios`
+ `If you don't enter an id in -show, all scenarios will be shown to you`
 
 ## How to use
 **1.** Create excel file called *"TestResults"*.  
@@ -49,3 +49,4 @@ All scenarios are accepted in json format, if you don't want to write them manua
 ```
 
 Operations in which there is no additional data take the form 0 or 1, if they need to be done during the `-read <json_name>` command, then you need to set 1, but if processing of this command is not needed, use 0. For example, in the first line commands are processed: `-code_get`, `-code_post`, `-byid <url> <id>` and command `-bytag <url> <tag>` - aren't processed.
+
