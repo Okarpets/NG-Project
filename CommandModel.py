@@ -99,7 +99,6 @@ def code_post(orderarray):
             try:
                 file = open("{}.json".format(post), "r")
                 u_data = json.load(file)
-                print(u_data)
                 site = requests.post(url, data=json.dumps(u_data))
             except Exception:
                 print("\tInvalid values\n")
@@ -152,8 +151,8 @@ def excel():
     lst.create_sheet('CodePostResults')
     lst.create_sheet('ElementById')
     lst.create_sheet('ElementByTag')
-    lst['CodeGetResults'].append(["Url","Returned Code"])
-    lst['CodePostResults'].append(["Url","Returned Code"])
+    lst['CodeGetResults'].append(["Url","Order"])
+    lst['CodePostResults'].append(["Url","Order"])
     lst['ElementById'].append(["Given Id","Url","Result"])
     lst['ElementByTag'].append(["Given Tag","Url","Result"])
     lst['ScenarioResults'].append(["Url","Get requests", "Post requests", "Finded by id","Finded by tag"])
@@ -185,39 +184,78 @@ def bytag(p_url, p_tag):
 def create(p_name):
     file = open(f"{p_name}.json", 'w')
     file.write('[''\n')
+    scen_id = 1
     while True:
-        print(
-        "\t\t\tNow pleaase write all command we have to do:\n" +
-        "\t\tCreate scenario params. If you want skip a command enter 0, else 1\n\n"
-        "\t\t\t\tPLEASE FILL IN THE FORM\n\n"
-        )
-        url = str(input('\tEnter url: '))
+        print("\tPlease enter url for {0} scenario: ".format(scen_id))
+        url = str(input())
         get = "0" 
         post = "0" 
         htmlid = "0" 
-        htmltag = "0" 
-        command = "0"
-        if input('\tDo you want do get requests?\n') == "1":
-            get = "1"
-        if input('\tDo you want do post requests?\n') == "1":
-            post = "1"
-        if input('\tDo you want search element by id?\n') == "1":
-            htmlid = str(input('\tEnter id: '))
-        if input('\tDo you want search element by tag?\n') == "1":
-            htmltag = str(input('\tEnter tag: '))
-        if get == "0" and post == "0" and htmlid == "0" and htmltag == "0":
-            print("\t\tEmpty scenatio won't be added\n")
-            create(p_name)
-        data = {"url" : url, "get" : get, "post" : post, "htmlid" : htmlid, "htmltag" : htmltag}
-        command = str(input("\n\t\tYou want create new case? If yes enter any button, else - \"F\"\n"))
-        if command == 'F' or command == "f":
-            json.dump(data, file)
-            file.write('\n'']')
-            file.close()
+        htmltag = "0"
+        get_params = "0"
+        post_data = "0"
+        oper = "0"
+        oper_endp = "0"
+        def under_create():
+            print(
+            "\t\t\tCommand list:\n" +
+            "\t\t1 - Get requests\n" +
+            "\t\t2 - Post requests\n" +
+            "\t\t3 - Element by id\n" +
+            "\t\t4 - Element by tag\n\n" +
+            "\t\tE - Exit\n" +
+            "\t\tC - Go to next scenario"
+            )
+            order = str(input("\tSelect a command from \"Command list\"\n"))
+            return order
+        while oper != "end":
+            match under_create(): # Getting the operation from the request
+                case "1":
+
+                    par_order = str(input("\tDo you want to add params? (Y/ )\n"))
+                    if par_order == 'Y' or par_order == 'y':
+                        get_params = str(input("\tEnter name of the json-file with params\n"))
+                        get = "2"
+                    else:
+                        get = "1"
+
+                case "2":
+                                    
+                    par_order = str(input("\tDo you want to add data? (Y/ )\n"))
+                    if par_order == 'Y' or par_order == 'y':
+                        post_data = str(input("\tEnter name of the json-file with data\n"))
+                        post = "2"
+                    else:
+                        post = "1"
+
+                case "3":
+                                            
+                    htmlid = str(input("\tEnter HTML elemnent id\n"))
+                        
+                case "4":
+                                            
+                    htmltag = str(input("\tEnter HTML elemnent tag\n"))
+
+                case "F":
+
+                    json.dump(data, file)
+                    file.write('\n'']')
+                    file.close()
+                    oper = "end"      
+                    oper_endp = "end"
+                case "C":
+
+                    json.dump(data, file)
+                    file.write(',\n')
+                    scen_id += 1
+                    oper = "end"
+                
+                case _:
+                    print("This command doesn't exist, use \"Command list\"")
+                    
+            data = {"id" : scen_id, "url" : url, "get" : get, "params" : get_params, "post" : post, "data" : post_data, "htmlid" : htmlid, "htmltag" : htmltag}
+        if oper_endp == "end":
             break
-        else:
-            json.dump(data, file)
-            file.write(',\n')
             
 
 #COMAND 7 - SHOW ALL THE FILE OF SCENARIO
