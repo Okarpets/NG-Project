@@ -82,20 +82,22 @@ def create(p_name):
                                             
                     htmltag = str(input("\tEnter HTML elemnent tag\n"))
 
-                case "F":
-
+                case "E":
+                    
                     json.dump(data, file)
                     file.write('\n'']')
                     file.close()
                     oper = "end"      
                     oper_endp = "end"
                 case "C":
-
-                    json.dump(data, file)
-                    file.write(',\n')
-                    scen_id += 1
-                    oper = "end"
-                    print("\tPlease enter url for {0} scenario: ".format(scen_id))
+                    
+                    if get == "0" and post == "0" and htmlid == "0" and htmltag == "0":
+                        print("The scenario will not be added because it is empty")
+                    else:
+                        json.dump(data, file)
+                        file.write(',\n')
+                        scen_id += 1
+                        oper = "end"
                 
                 case _:
                     print("This command doesn't exist, use \"Command list\"")
