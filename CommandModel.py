@@ -12,14 +12,14 @@ def help():
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
     "\t-exit -- Exits the program\n" +
-    "\t-code_get <url> <json_file OR type> -- Returns the code from your get requests to the url\n" +
+    "\t-code_get <url> <json_file OR type OR nothing> -- Returns the code from your get requests to the url\n" +
     "\t\tCommands: headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)\n" +
     "\t-code_post <url> <json_file OR nothing> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <json_name> -- Create scenario in a document\n" +
-    "\t-read <json_name> -- Read and process all scenario in a document\n" +
-    "\t-show <json_name> <id> -- Show you all scenario in the file OR one scenario in the file by id\n" +
+    "\t-read <json_name> <id> -- Read and process all scenario in a document OR one scenario in the file by scenario id\n" +
+    "\t-show <json_name> <id> -- Show you all scenario in the file OR one scenario in the file by secanrio id\n" +
     "\t\tIf you don't enter id -show test show you all scenarios"
     )
     work()
@@ -155,7 +155,7 @@ def excel():
     lst['CodePostResults'].append(["Url","Order"])
     lst['ElementById'].append(["Given Id","Url","Result"])
     lst['ElementByTag'].append(["Given Tag","Url","Result"])
-    lst['ScenarioResults'].append(["Scenario ID","Url","Get requests", "Post requests", "Find-order by id","Find-order by tag"])
+    lst['ScenarioResults'].append(["Scenario ID","Url","Get requests", "Post requests", "Find-order by id","Find-order by tag", "Scenario-file name"])
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
 
@@ -266,27 +266,23 @@ def show(p_name, p_id):
     with open("{0}.json".format(p_name), "r") as file:
         if p_id == "0":
             print("\t\tYour scenario:\n")
-            for elem in file:
-                print(elem)
+            for lines in file:
+                print(lines)
             file.close()
             work()
         js_file = json.load(file)
         file.close()
         print("\t\tYour scenario:\n")
-        for elem in js_file:
-            if str(elem['id']) == str(p_id):
-                print(elem)
+        for lines in js_file:
+            if str(lines['id']) == str(p_id):
+                print(lines)
                 work()
         print("Scenario with that id wasn't found or it doesn't exist")
         work()
 
 
 #COMMAND 8 - READ SCENARIO MODEL
-def read(p_name):
-    file = open("{0}.json".format(p_name), "r")
-    file = json.load(file) 
-    for lines in file:
-
+def handle(lines, p_name):
         scen_id = lines['id']
         url = lines['url']
         code_get = lines['get']
@@ -330,31 +326,49 @@ def read(p_name):
             site = requests.get(url)
             soup = BeautifulSoup(site.text, 'html.parser')
             u_id = soup.find_all(id='{0}'.format(u_id))
-            if u_id != []:
-                u_id = "The element IS on the page"
-            else:
+            if u_id == []:
                 u_id = "The element ISN'T on the page"
+            else:
+                u_id = "The element IS on the page"
         else:
             u_id = "The operation was not requested"
         
 
         if u_tag != "0":
+            print(u_tag)
             site = requests.get(url)
             soup = BeautifulSoup(site.text, 'html.parser')
             u_tag = soup.find_all('{0}'.format(u_tag))
+            print(u_tag)
             if u_tag == []:
                 u_tag = "Tag ISN'T HERE"
-            if u_tag != []:
+            else:
                 u_tag = "Tag IS here"
         else:
             u_tag = "The operation was not requested"
         file = 'TestResults.xlsx' #Create or open file with that name
         lst = load_workbook(file) #It is depend on save and close command
         xlsx = lst['ScenarioResults'] #List in 'TestResult.xlsx'
-        xlsx.append([scen_id,url,get_order,post_order,u_id,u_tag]) #Adding that data in xlsx file
+        xlsx.append([scen_id,url,get_order,post_order,u_id,u_tag,p_name]) #Adding that data in xlsx file
         lst.save(file) #REMEMBER THE WRITING RULES
         lst.close()
-    print("\n\t\tAll the scenario was processed\n")
+
+
+def read(p_name, p_id):
+    if p_id == "0":
+        file = open("{0}.json".format(p_name), "r")
+        file = json.load(file) 
+        for lines in file:
+            handle(lines, p_name)
+        print("\n\t\tAll the scenario was processed\n")
+    else:  
+        with open("{0}.json".format(p_name), "r") as file:
+            js_file = json.load(file)
+            file.close()
+            for elem in js_file:
+                if str(elem['id']) == str(p_id):
+                    handle(elem, p_name)
+        print("\n\tScenario was processed\n")
     work()
 
 #COMMAND ANSWER - ERROR MESSAGES
@@ -411,8 +425,13 @@ def work():
                     err()
         case"-read":
                 try:
-                    p_name = orderarray[1]
-                    read(p_name)
+                    if len(orderarray) == 2:
+                        p_name = orderarray[1]
+                        read(p_name, "0")
+                    if len(orderarray) == 3:
+                        p_name = orderarray[1]
+                        p_id = orderarray[2]
+                        read(p_name, p_id)
                 except Exception:
                     err()
         case"-exit":
