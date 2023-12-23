@@ -32,8 +32,8 @@
  `If you don't enter an id in -show, all scenarios will be shown to you`
 
 ## How to use
-**1.** Create excel file called *"TestResults"*.  
-**2.** Start *"main.py"* and Open the console and write `pip install -r requirements.txt`  
+**1.** Start *"main.py"* and Open the console and write `pip install -r requirements.txt`     
+**2.** Wait until the libraries are installed     
 **3.** Run and use.
 
 ## Requirements
