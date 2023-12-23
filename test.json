@@ -1,5 +1,17 @@
 [
 {"id": 1, "url": "https://dada.com.ua/", "get": "1", "params": "0", "post": "1", "data": "0", "htmlid": "op-er-t", "htmltag": "p"},
 {"id": 2, "url": "https://elit-ampir.com.ua/ua/p1212509987-molding-home-decor.html", "get": "0", "params": "0", "post": "0", "data": "0", "htmlid": "tr-op", "htmltag": "a"},
-{"id": 3, "url": "https://www.youtube.com/watch?v=HfBJ0_1c4PU", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "0", "htmltag": "div"}
+{"id": 3, "url": "https://www.youtube.com/watch?v=HfBJ0_1c4PU", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "0", "htmltag": "div"},
+{"id": 4, "url": "https://starkovden.github.io/Use-GitHub-Desktop.html", "get": "1", "params": "0", "post": "1", "data": "file-dont-exist", "htmlid": "tg-sb-content", "htmltag": "html"},
+{"id": 5, "url": "https://ru.wikipedia.org/wiki/The_Game_Awards", "get": "2", "params": "file-dont-exist", "post": "1", "data": "0", "htmlid": "0", "htmltag": "div"},
+{"id": 6, "url": "https://www.freecodecamp.org/ukrainian/news/yak-stvoryty-telehram-bota-za-dopomohoyu-python/", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "nav-forum", "htmltag": "li"},
+{"id": 7, "url": "https://disted.edu.vn.ua/courses/learn/12688", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "0", "htmltag": "0"},
+{"id": 8, "url": "https://disted.edu.vn.ua/courses/learn/12688", "get": "1", "params": "0", "post": "1", "data": "0", "htmlid": "block62951", "htmltag": "span"},
+{"id": 9, "url": "https://habr.com/ru/articles/710350/", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "adfox_164725680533065327", "htmltag": "script"},
+{"id": 10, "url": "https://github.com/Okarpets/NG_2023_Oleksandr_Karpets", "get": "1", "params": "0", "post": "2", "data": "file-dont-exist", "htmlid": "0", "htmltag": "none"},
+{"id": 11, "url": "https://ru.stackoverflow.com/questions/1157100/post-%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81-%D0%BA-api-youtube-%D0%BD%D0%B0-java", "get": "1", "params": "0", "post": "1", "data": "0", "htmlid": "0", "htmltag": "p"},
+{"id": 12, "url": "https://ru.stackoverflow.com/questions/1159043/%d0%9f%d1%80%d0%be%d1%81%d1%82%d0%b5%d0%b9%d1%88%d0%b8%d0%b9-post-%d0%b7%d0%b0%d0%bf%d1%80%d0%be%d1%81-java-android?rq=1", "get": "0", "params": "0", "post": "0", "data": "0", "htmlid": "webpack-public-path", "htmltag": "0"},
+{"id": 13, "url": "https://www.rockstargames.com/ru/reddeadredemption2", "get": "1", "params": "file-dont-exist", "post": "0", "data": "0", "htmlid": "yearInput", "htmltag": "input"},
+{"id": 14, "url": "https://ravesli.com/uroki-cpp/", "get": "1", "params": "0", "post": "1", "data": "0", "htmlid": "a11y-speak-intro-text", "htmltag": "div"},
+{"id": 15, "url": "https://www.microsoft.com/ru-ru/sql-server/sql-server-downloads", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "modalsRenderedAfterPageLoad", "htmltag": "link"}
 ]

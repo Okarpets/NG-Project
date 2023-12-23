@@ -1,10 +1,13 @@
-import requests
-from requests.exceptions import Timeout
 from requests.exceptions import ConnectionError
+from selenium import webdriver
+from requests.exceptions import Timeout
 from openpyxl import load_workbook 
 from bs4 import BeautifulSoup
+import requests
 import json
 
+
+driver=webdriver.Chrome()
 
 #COMMAND USER : 0 - HELP (MAUNAL)
 def help():
@@ -119,10 +122,9 @@ def code_post(orderarray):
 #COMMAND USER : 3 - RETURN HTML ELEMENT BY ID
 def byid(p_url, p_id):
     url = p_url
-    site = requests.get(url)
-    soup = BeautifulSoup(site.text, 'html.parser')
+    driver.get(url)
+    soup = BeautifulSoup(driver.page_source, 'lxml')
     u_id = soup.find_all(id='{0}'.format(p_id))
-    print(u_id)
     if u_id == []:
         u_id = "Id ISN'T on the page"
     else:
@@ -140,14 +142,14 @@ def byid(p_url, p_id):
 #COMMAND USER : 4 - RETURN HTML ELEMENT BY TAG
 def bytag(p_url, p_tag):
     url = p_url
-    site = requests.get(url)
-    soup = BeautifulSoup(site.text, 'html.parser')
+    driver.get(url)
+    soup = BeautifulSoup(driver.page_source, 'lxml')
     u_tag = soup.find_all('{0}'.format(p_tag))
     if u_tag == []:
         u_tag = "Tag ISN'T on the page"
-        print('\t' + str(u_tag) + '\n')
     else:
         u_tag = "Tag IS on the page"
+    print('\t' + u_tag + '\n')
     file = 'TestResults.xlsx' #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['ElementByTag'] #List in 'TestResult.xlsx'
@@ -336,8 +338,8 @@ def handle(lines, p_name):
 
         #ID PART
         if u_id != "0":
-            site = requests.get(url)
-            soup = BeautifulSoup(site.text, 'html.parser')
+            driver.get(url)
+            soup = BeautifulSoup(driver.page_source, 'lxml')
             u_id = soup.find_all(id='{0}'.format(u_id))
             if u_id == []:
                 u_id = "Id ISN'T on the page"
@@ -348,8 +350,8 @@ def handle(lines, p_name):
         
         #TAG PART
         if u_tag != "0":
-            site = requests.get(url)
-            soup = BeautifulSoup(site.text, 'html.parser')
+            driver.get(url)
+            soup = BeautifulSoup(driver.page_source, 'lxml')
             u_tag = soup.find_all('{0}'.format(u_tag))
             if u_tag == []:
                 u_tag = "Tag ISN'T on the page"
