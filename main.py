@@ -1,13 +1,16 @@
 from requests.exceptions import ConnectionError
-from selenium import webdriver
 from requests.exceptions import Timeout
 from openpyxl import load_workbook 
+from selenium import webdriver
 from bs4 import BeautifulSoup
+import xlsxwriter
 import requests
 import json
+import os
 
-
+OpusFile = "0"
 driver=webdriver.Chrome()
+
 
 #COMMAND USER : 0 - HELP (MAUNAL)
 def help():
@@ -35,7 +38,7 @@ def code_get(orderarray):
             try:
                 site = requests.get(p_url)
             except Exception:
-                print("\t\tInvalid values\n")
+                print("\t\t\tInvalid values\n")
                 work()
             order = site.status_code # CODE OF GET REQUEST
             print("\t\tReturned сode: " + str(order) + '\n')
@@ -72,10 +75,10 @@ def code_get(orderarray):
                         print("\t\t{0}\n".format(order))
                         work()
     except ConnectionError: 
-        print("\t\tConnection error\n")
+        print("\t\t\tConnection error\n")
     except Timeout:
-        print("\t\tThe request timed out\n")
-    file = 'TestResults.xlsx' #Create or open file with that name
+        print("\t\t\tThe request timed out\n")
+    file = OpusFile #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodeGetResults'] #List in 'TestResult.xlsx'
     xlsx.append([p_url,order]) #Adding that data in xlsx file
@@ -91,7 +94,7 @@ def code_post(orderarray):
             try:
                 site = requests.post(url)
             except Exception:
-                print("\t\tInvalid values\n")
+                print("\t\t\tInvalid values\n")
                 work()
             order = site.status_code # CODE OF POST REQUEST
             print("\t\tReturned сode: " + str(order) + '\n')
@@ -110,7 +113,7 @@ def code_post(orderarray):
         print("\t\tConnection error\n")
     except Timeout:
         print("\t\tThe request timed out\n")
-    file = 'TestResults.xlsx' #Create or open file with that name
+    file = OpusFile #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['CodePostResults'] #List in 'TestResult.xlsx'
     xlsx.append([url,order]) #Adding that data in xlsx file
@@ -130,7 +133,7 @@ def byid(p_url, p_id):
     else:
         u_id = "Id IS on the page"
     print('\t' + u_id + '\n')
-    file = 'TestResults.xlsx' #Create or open file with that name
+    file = OpusFile #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['ElementById'] #List in 'TestResult.xlsx'
     xlsx.append([p_id,url,u_id]) #Adding that data in xlsx file
@@ -150,13 +153,14 @@ def bytag(p_url, p_tag):
     else:
         u_tag = "Tag IS on the page"
     print('\t' + u_tag + '\n')
-    file = 'TestResults.xlsx' #Create or open file with that name
+    file = OpusFile #Create or open file with that name
     lst = load_workbook(file) #It is depend on save and close command
     xlsx = lst['ElementByTag'] #List in 'TestResult.xlsx'
     xlsx.append([p_tag,url,u_tag]) #Adding that data in xlsx file
     lst.save(file) #REMEMBER THE WRITING RULES
     lst.close()
     work()
+    
 
 #COMMAND USER : 5 - CREATE SCENARIO TO JSON FILE
 def create(p_name):
@@ -270,23 +274,28 @@ def show(p_name, p_id):
     
 #COMMAND ANSWER : 1 - FORMATS .XLSX DOCUMENT
 def excel():
-    file = 'TestResults.xlsx'
-    lst = load_workbook(file) #It is depend on save and close command
-    for sheet_name in lst.sheetnames:
-        sheet = lst[(sheet_name)]
-        lst.remove(sheet)
-    lst.create_sheet('ScenarioResults')
-    lst.create_sheet('CodeGetResults') # CREATE LISTS
-    lst.create_sheet('CodePostResults')
-    lst.create_sheet('ElementById')
-    lst.create_sheet('ElementByTag')
-    lst['CodeGetResults'].append(["Url","Order"])
-    lst['CodePostResults'].append(["Url","Order"])
-    lst['ElementById'].append(["Given Id","Url","Result"])
-    lst['ElementByTag'].append(["Given Tag","Url","Result"])
-    lst['ScenarioResults'].append(["Scenario ID","Url","Get requests", "Post requests", "Find-order by id","Find-order by tag", "Scenario-file name"])
-    lst.save(file) #REMEMBER THE WRITING RULES
-    lst.close()
+    file = str(input("\t\t\tPlease enter the Excel file name for the entry\n"))
+    file_list = os.listdir()
+    file = "{0}.xlsx".format(file)
+    global OpusFile
+    OpusFile = file
+    if file in file_list:
+        lst = load_workbook(file)
+        if "ScenarioResults" != lst.sheetnames[0]:
+            formating(file)
+            print("\t\t\tFile found and formatted\n")
+        else:
+            print("\t\t\tFile found\n")
+    else:
+        order = str(input("\t\tThat file doesn't exist, do you wanna create it? (Y/ )\n"))
+        if order == 'Y' or order == 'y':
+            workbook = xlsxwriter.Workbook(file)
+            worksheet = workbook.add_worksheet()
+            workbook.close()
+            formating(file)
+            print("\t\tThe file was created successfully\n")
+        else:
+            excel()
 
 
 #COMMAND ANSWER : 2 - ERROR MESSAGES
@@ -359,12 +368,31 @@ def handle(lines, p_name):
                 u_tag = "Tag IS on the page"
         else:
             u_tag = "The operation wasn't requested"
-        file = 'TestResults.xlsx' #Create or open file with that name
+        file = OpusFile #Create or open file with that name
         lst = load_workbook(file) #It is depend on save and close command
         xlsx = lst['ScenarioResults'] #List in 'TestResult.xlsx'
         xlsx.append([scen_id,url,get_order,post_order,u_id,u_tag,p_name]) #Adding that data in xlsx file
         lst.save(file) #REMEMBER THE WRITING RULES
         lst.close()
+
+def formating(file):
+    lst = load_workbook(file) #It is depend on save and close command
+    for sheet_name in lst.sheetnames:
+        sheet = lst[(sheet_name)]
+        lst.remove(sheet)
+        lst.create_sheet('ScenarioResults')
+        lst.create_sheet('CodeGetResults') # CREATE LISTS
+        lst.create_sheet('CodePostResults')
+        lst.create_sheet('ElementById')
+        lst.create_sheet('ElementByTag')
+        lst['CodeGetResults'].append(["Url","Order"])    
+        lst['CodePostResults'].append(["Url","Order"])
+        lst['ElementById'].append(["Given Id","Url","Result"])    
+        lst['ElementByTag'].append(["Given Tag","Url","Result"])
+        lst['ScenarioResults'].append(["Scenario ID","Url","Get requests", "Post requests", "Find-order by id","Find-order by tag", "Scenario-file name"])
+        lst.save(file) #REMEMBER THE WRITING RULES
+        lst.close()
+
 ############################################################################
     
 
@@ -435,8 +463,6 @@ def work():
 
 #MAIN !!!
 print("\n\t\tWelcome! The program has started. Type the command or -help for programming guidance or use right now\n")
-lst = load_workbook('TestResults.xlsx')
-if "ScenarioResults" != lst.sheetnames[0]:
-    excel()
-
+excel()
 work()
+
