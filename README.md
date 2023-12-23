@@ -51,5 +51,5 @@ All scenarios are accepted in json format, if you don't want to write them manua
     ]
 ```
 
-Operations in which there is no additional data take the form 0 or 1, if they need to be done during the `-read <json_name>` command, then you need to set 1, but if processing of this command is not needed, use 0. For example, in the first line commands are processed: `-code_get`, `-code_post`, `-byid <url> <id>` and command `-bytag <url> <tag>` - aren't processed.
+Operations in which there is no additional data take the form 0 or 1, if they need to be done during the `-process <json_name> <id>` command, then you need to set 1, but if processing of this command is not needed, use 0. For example, in the first line commands are processed: `-code_get`, `-code_post`, `-byid <url> <id>` and command `-bytag <url> <tag>` - aren't processed.
 
