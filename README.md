@@ -9,7 +9,7 @@
 
 - `-exit` - End program execution
 
-- `replace <new-xlsx-file name>` - Allows you to change the current Excel file for writing
+- `-replace <new-xlsx-file name>` - Allows you to change the current Excel file for writing
 
 - `-code_get <url> <json_file OR typical command OR nothing>` - Returns the code from your get requests to the url
  
@@ -20,8 +20,6 @@
 - `-byid <url> <id>` - Returns the STATIC HTML element from your get requests to the url by id
 
 - `-bytag <url> <tag>` - Returns the STATIC HTML element from your get requests to the url by tag
-
-- `-show <json_name>` - Show you all scenario in the file
 
 ## Functions for interacting with scenarios
 
