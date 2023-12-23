@@ -9,6 +9,8 @@
 
 - `-exit` - End program execution
 
+- `replace <new-xlsx-file name>` - Allows you to change the current Excel file for writing
+
 - `-code_get <url> <json_file OR typical command OR nothing>` - Returns the code from your get requests to the url
  
  `TC : headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)`
@@ -25,7 +27,7 @@
 
 - `-create <json_name>` - Create scenario in a document
 
-- `-read <json_name> <id>` - Read and process all scenario in a document OR one scenario in the file by scenario id
+- `-process <json_name> <id>` - Process all scenario in a document OR one scenario in the file by scenario id
 
 - `-show <json_name> <id>` -- Show you all scenario in the file OR one scenario in the file by scenaio id
 
@@ -44,7 +46,10 @@ All scenarios are accepted in json format, if you don't want to write them manua
     [
     {"id": 1, "url": "https://dada.com.ua/", "get": "1", "params": "0", "post": "1", "data": "0", "htmlid": "op-er-t", "htmltag": "p"},
     {"id": 2, "url": "https://elit-ampir.com.ua/ua/p1212509987-molding-home-decor.html", "get": "0", "params": "0", "post": "0", "data": "0", "htmlid": "tr-op", "htmltag": "a"},
-    {"id": 3, "url": "https://www.youtube.com/watch?v=HfBJ0_1c4PU", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "0", "htmltag": "div"}
+    .
+    .
+    .
+    {"id": N, "url": "https://www.youtube.com/watch?v=HfBJ0_1c4PU", "get": "1", "params": "0", "post": "0", "data": "0", "htmlid": "0", "htmltag": "div"}
     ]
 ```
 

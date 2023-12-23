@@ -18,13 +18,14 @@ def help():
     "This program was created as a website tester, below you can see a list of existing commands:\n\n" +
     "\t-help -- Write a manual for using the program\n" +
     "\t-exit -- End program execution\n" +
+    "\t-replace <new-xlsx-file name> -- Allows you to change the current Excel file for writing\n" +
     "\t-code_get <url> <json_file OR \"TC\" OR nothing> -- Returns the code from your get requests to the url\n" +
     "\t\t\"TC\" : headers, content, text -- typical commands to return a request (NOT WRITTEN IN EXCEL)\n" +
     "\t-code_post <url> <json_file OR nothing> -- Returns the code from your post requests to the url\n" +
     "\t-byid <url> <id> -- Returns the STATIC HTML element from your get requests to the url by id\n" +
     "\t-bytag <url> <tag> -- Returns the STATIC HTML element from your get requests to the url by tag\n" +
     "\t-create <json_name> -- Create scenario in a document\n" +
-    "\t-read <json_name> <id> -- Read and process all scenario in a document OR one scenario in the file by scenario id\n" +
+    "\t-process <json_name> <id> -- Process all scenario in a document OR one scenario in the file by scenario id\n" +
     "\t-show <json_name> <id> -- Show you all scenario in the file OR one scenario in the file by secanrio id\n" +
     "\t\tIf you don't enter id -show test show you all scenarios"
     )
@@ -122,7 +123,17 @@ def code_post(orderarray):
     work()
 
 
-#COMMAND USER : 3 - RETURN HTML ELEMENT BY ID
+#COMMAND USER : 3 - REPLACE MAIN EXCEL FILE
+def repl(p_name):
+    file = "{0}.xlsx".format(p_name)
+    global OpusFile
+    old_file = OpusFile
+    OpusFile = file
+    print(f"\n\t\tThe Excel file for recording was successfully changed from {old_file} to {OpusFile}\n")
+    work()
+
+
+#COMMAND USER : 4 - RETURN HTML ELEMENT BY ID
 def byid(p_url, p_id):
     url = p_url
     driver.get(url)
@@ -142,7 +153,7 @@ def byid(p_url, p_id):
     work()
 
 
-#COMMAND USER : 4 - RETURN HTML ELEMENT BY TAG
+#COMMAND USER : 5 - RETURN HTML ELEMENT BY TAG
 def bytag(p_url, p_tag):
     url = p_url
     driver.get(url)
@@ -162,7 +173,7 @@ def bytag(p_url, p_tag):
     work()
     
 
-#COMMAND USER : 5 - CREATE SCENARIO TO JSON FILE
+#COMMAND USER : 6 - CREATE SCENARIO TO JSON FILE
 def create(p_name):
     file = open(f"{p_name}.json", 'w')
     file.write('[''\n')
@@ -230,8 +241,8 @@ def create(p_name):
         if oper_endp == "end":
             break
             
-#COMMAND USER : 6 - COMMAND TO CREATE REQUESTS FOR SCENARIO PROCESSING IN AN EXCEL FILE
-def read(p_name, p_id):
+#COMMAND USER : 7 - COMMAND TO CREATE REQUESTS FOR SCENARIO PROCESSING IN AN EXCEL FILE
+def process(p_name, p_id):
     if p_id == "0":
         file = open("{0}.json".format(p_name), "r")
         file = json.load(file) 
@@ -249,7 +260,7 @@ def read(p_name, p_id):
     work()
 
 
-#COMMAND USER : 7 - SHOW ALL THE FILE OF SCENARIO
+#COMMAND USER : 8 - SHOW ALL THE FILE OF SCENARIO
 def show(p_name, p_id):
     with open("{0}.json".format(p_name), "r") as file:
         if p_id == "0":
@@ -283,9 +294,9 @@ def excel():
         lst = load_workbook(file)
         if "ScenarioResults" != lst.sheetnames[0]:
             formating(file)
-            print("\t\t\tFile found and formatted\n")
+            print("\t\t\t\tFile found and formatted\n")
         else:
-            print("\t\t\tFile found\n")
+            print("\t\t\t\t\tFile found\n")
     else:
         order = str(input("\t\tThat file doesn't exist, do you wanna create it? (Y/ )\n"))
         if order == 'Y' or order == 'y':
@@ -375,6 +386,8 @@ def handle(lines, p_name):
         lst.save(file) #REMEMBER THE WRITING RULES
         lst.close()
 
+
+#COMMAND ANSWER : 4 - FORMANTS AN EXCEL FILE 
 def formating(file):
     lst = load_workbook(file) #It is depend on save and close command
     for sheet_name in lst.sheetnames:
@@ -410,6 +423,12 @@ def work():
         case"-exit":
                 print("\n\t\tEnd program execution")
                 return 0
+        case"-replace":
+                try:
+                    p_name = orderarray[1]
+                    repl(p_name)
+                except Exception:
+                    err()
         case"-code_get":
                 code_get(orderarray)
         case"-code_post":
@@ -434,15 +453,15 @@ def work():
                     create(p_name)
                 except Exception:
                     err()
-        case"-read":
+        case"-process":
                 try:
                     if len(orderarray) == 2:
                         p_name = orderarray[1]
-                        read(p_name, "0")
+                        process(p_name, "0")
                     if len(orderarray) == 3:
                         p_name = orderarray[1]
                         p_id = orderarray[2]
-                        read(p_name, p_id)
+                        process(p_name, p_id)
                 except Exception:
                     err()
         case"-show":
