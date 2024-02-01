@@ -1,4 +1,4 @@
-# Si'test application
+# SeTst - Site Executive Test
 
  A console application created to work with site requests and their HTML structures using scenarios or monofunctions. The results are written to an excel file called TestResults.
 
